@@ -44,8 +44,7 @@ require(["dojox/gfx", "dojox/gfx/shape"],
 					blurFilter.setAttribute("id", g._base._getUniqueId());
         		                blurFilter.setAttribute("stdDeviation", size);
         		                blurNode.appendChild(blurFilter);
-					defNode.appendChild(blurNode);
-        		        	surface.rawNode.appendChild(defNode);  
+					defNode.appendChild(blurNode); 
         		        	this.rawNode.setAttribute("filter", "url(#" + blurNode.getAttribute("id") +")");
 				}
         		        return this;
