@@ -86,7 +86,6 @@ require(["dojox/gfx", "dojox/gfx/shape"],
         		                filterNode.appendChild(colorFilter);
         		                filterNode.appendChild(mergeFilter);
 					defNode.appendChild(filterNode);
-        		        	surface.rawNode.appendChild(defNode);
         		        	this.rawNode.setAttribute("filter", "url(#" + filterNode.getAttribute("id") +")");
 				}
         		        return this;
