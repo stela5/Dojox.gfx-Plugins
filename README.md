@@ -33,9 +33,6 @@ Add the desired effect javascript file to the dojox/gfx folder (requires Dojo 1.
 **Q:** Why doesn't the blur effect work in Safari?  
 **A:** Safari doesn't currently implement feGaussianBlur properly.  Use WebKit nightly instead.
 
-**Q:** Why isn't the shadow blurred using the VML renderer?  
-**A:** VML doesn't support shadow blur.
-
 **Q:** Why does the shadow sometimes appear through the original object using the Canvas renderer?  
 **A:** Good question.  Setting globalCompositeOperation="lighter" helps a little but I'm sure there's a better answer.
 
