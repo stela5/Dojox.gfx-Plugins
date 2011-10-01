@@ -26,7 +26,6 @@ require(["dojox/gfx", "dojox/gfx/shape"],
 				//		sizeType: String - can be "stdDeviation" (from SVG), "radius" (from Silverlight),
 				//					 "pixelRadius" (from VML) (default = "stdDeviation")
 				//		color: Array|String|Object (dojo.Color) - sets shadow color (default = [0,0,0,0.5])
-
 				if (!shadow) shadow = {"dx":4,"dy":4,"size":"2.5","sizeType":"stdDeviation","color":[0,0,0,0.5]};
 				if (!shadow.dx || !parseInt(shadow.dx)) shadow.dx = 4;
 				if (!shadow.dy || !parseInt(shadow.dy)) shadow.dy = 4;
@@ -121,7 +120,7 @@ require(["dojox/gfx", "dojox/gfx/shape"],
 					// add shadow
 					var size = parseFloat(shadow.size);
 					if (shadow.sizeType != "radius") size = (size * 3.0);
-					var color = dojox.gfx.normalizeColor(shadow.color);
+					var color = g.normalizeColor(shadow.color);
 					var orientation = _convertOffset(shadow.dx,shadow.dy);
 					var xamlFragment = "<DropShadowEffect Color='" + color.toHex() + 
 						"' Direction='" + orientation.direction + "' ShadowDepth='" + orientation.depth + 
@@ -136,7 +135,7 @@ require(["dojox/gfx", "dojox/gfx/shape"],
 		case "vml":
 			shape.Shape.prototype.setShadow = function(shadow){
 				//	summary:
-				//		sets a shadow effect (VML) - see http://msdn.microsoft.com/en-us/library/bb229490(VS.85).aspx
+				//		sets a shadow effect - see http://msdn.microsoft.com/en-us/library/ms533086(v=VS.85).aspx
 				//	shadow: Object
 				//		dx: Integer - sets x-axis offset (default = 4)
 				//		dy: Integer - sets y-axis offset (default = 4)
@@ -144,9 +143,11 @@ require(["dojox/gfx", "dojox/gfx/shape"],
 				//		sizeType: String - can be "stdDeviation" (from SVG), "radius" (from Silverlight),
 				//					 "pixelRadius" (from VML) (default = "stdDeviation")
 				//		color: Array|String|Object (dojo.Color) - sets shadow color (default = [0,0,0,0.5])
-				//
-				//	note: VML shadow does not support blur
-
+				var r = this.rawNode,
+					s = r.style,
+					regExpShadow = / progid:\S+Shadow\([^\)]+\)/g,
+					regExpAlpha = / progid:\S+Alpha\([^\)]+\)/g,
+					filterWithoutShadow = s.filter.replace(regExpShadow, "").replace(regExpAlpha, "");
 				if (!shadow) shadow = {"dx":4,"dy":4,"size":"2.5","sizeType":"stdDeviation","color":[0,0,0,0.5]};
 				if (!shadow.dx || !parseInt(shadow.dx)) shadow.dx = 4;
 				if (!shadow.dy || !parseInt(shadow.dy)) shadow.dy = 4;
@@ -154,18 +155,48 @@ require(["dojox/gfx", "dojox/gfx/shape"],
 				if (!shadow.sizeType) shadow.sizeType = "stdDeviation";
 				if (!shadow.color) shadow.color = [0,0,0,0.5];
 				if (shadow.size == "none"){
-					// remove shadow
-					this.rawNode.shadow.on = "False";
-				} else if (parseFloat(shadow.size)){
-					// add shadow
-					var size = parseFloat(shadow.size);
-					var color = dojox.gfx.normalizeColor(shadow.color);
-					this.rawNode.shadow.offset = parseInt(shadow.dx) + "pt," + parseInt(shadow.dy) + "pt";
-					this.rawNode.shadow.color = color.toHex();
-					this.rawNode.shadow.opacity = color.a;
-					this.rawNode.shadow.on = "True";				
+					s.filter = filterWithoutShadow;
+        				s.margin = 0;
+				} else if (parseInt(shadow.size)){
+                        		var size = parseInt(shadow.size) * 2;
+					var color = g.normalizeColor(shadow.color);
+					if (shadow.sizeType == "radius") size = (size / 3.0);
+					var alphaFilter = r.filters["DXImageTransform.Microsoft.Alpha"];
+					var shadowFilter = r.filters["DXImageTransform.Microsoft.Shadow"];
+              				if(shadowFilter){
+						if(r.fill.opacity && alphaFilter) alphaFilter.opacity = r.fill.opacity * 100;
+                        			shadowFilter.strength = size;
+                			} else {
+						var iOffset = 135;	// bottom-right
+						if (shadow.dx > 0 && shadow.dy < 0) iOffset = 45;
+						else if (shadow.dx < 0 && shadow.dy > 0) iOffset = 225;
+						else if (shadow.dx < 0 && shadow.dy < 0) iOffset = 315;
+						if (color.a !== 1) {
+							// convert rgba to rgb (assuming white background)
+							var c = [];
+							c.push(Math.round(((1 - color.a) * color.r) + (color.a * 255)));
+							c.push(Math.round(((1 - color.a) * color.g) + (color.a * 255)));
+							c.push(Math.round(((1 - color.a) * color.b) + (color.a * 255)));
+							c.push(1);
+							color = g.normalizeColor(c);
+						}
+						var sProperties = "strength="+size+", color="+color.toHex()+", direction="+iOffset;
+						if(r.fill.opacity) {
+							var o = r.fill.opacity * 100;
+							s.filter = filterWithoutShadow + 
+									" progid:DXImageTransform.Microsoft.Alpha(opacity=" + o + 
+									") progid:DXImageTransform.Microsoft.Shadow(" + sProperties + ")";
+						} else {
+							s.filter = filterWithoutShadow + 
+									" progid:DXImageTransform.Microsoft.Shadow(" + sProperties + ")";
+						}
+						s.margin = dojo.replace("-{0}px 0 0 -{0}px", [Math.round(size)]);
+					}
 				}
                 		return this;
+
+
+
                 	};
 			break;
 
@@ -194,7 +225,7 @@ require(["dojox/gfx", "dojox/gfx/shape"],
 				} else if (parseFloat(shadow.size)){
 					// add shadow
 					var size = parseFloat(shadow.size);
-					var color = dojox.gfx.normalizeColor(shadow.color);
+					var color = g.normalizeColor(shadow.color);
 					var ctx = this.surface.rawNode.getContext("2d");
 					var f = this.fillStyle;
 					if (shadow.sizeType == "radius") size = (size / 3.0);
