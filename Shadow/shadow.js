@@ -212,28 +212,17 @@ require(["dojox/gfx", "dojox/gfx/shape"],
 				//		sizeType: String - can be "stdDeviation" (from SVG), "radius" (from Silverlight),
 				//					 "pixelRadius" (from VML) (default = "stdDeviation")
 				//		color: Array|String|Object (dojo.Color) - sets shadow color (default = [0,0,0,0.5])
-
-				if (!shadow) shadow = {"dx":4,"dy":4,"size":"2.5","sizeType":"stdDeviation","color":[0,0,0,0.5]};
-				if (!shadow.dx || !parseInt(shadow.dx)) shadow.dx = 4;
-				if (!shadow.dy || !parseInt(shadow.dy)) shadow.dy = 4;
-				if (!shadow.size) shadow.size = "2.5";
+				if (!shadow) shadow = {"type":"shadow","dx":4,"dy":4,"size":2.5,"sizeType":"stdDeviation","color":[0,0,0,0.5]};
+				if (!shadow.dx || !parseFloat(shadow.dx)) shadow.dx = 4;
+				if (!shadow.dy || !parseFloat(shadow.dy)) shadow.dy = 4;
+				if (!shadow.size || !parseFloat(shadow.size)) shadow.size = 2.5;
 				if (!shadow.sizeType) shadow.sizeType = "stdDeviation";
 				if (!shadow.color) shadow.color = [0,0,0,0.5];
-				if (shadow.size == "none"){
-					// remove shadow
-					ctx.shadowColor = "rgba(0,0,0,0)";
-				} else if (parseFloat(shadow.size)){
-					// add shadow
-					var size = parseFloat(shadow.size);
-					var color = g.normalizeColor(shadow.color);
-					var ctx = this.surface.rawNode.getContext("2d");
-					var f = this.fillStyle;
-					if (shadow.sizeType == "radius") size = (size / 3.0);
-					ctx.shadowOffsetX = parseInt(shadow.dx);
-					ctx.shadowOffsetY = parseInt(shadow.dy);
-					ctx.shadowBlur    = size.toString();
-					ctx.shadowColor   = "rgba(" + color.r + ", " + color.g + ", " + color.b + ", " + color.a + ")";
-					// TODO: fix shadow stroke displaying through shape in Canvas renderer
+				if (this._gfxEffect) {
+					this._gfxEffect[this.getUID()] = shadow;
+				} else {
+					this._gfxEffect = {};
+					this._gfxEffect[this.getUID()] = shadow;
 				}
 	        		return this;
 			};

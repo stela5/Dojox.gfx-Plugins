@@ -4,7 +4,32 @@ Dojox.gfx Plugins are a collection of effects that are designed to work with <a 
 
 ## Installation
 
-Add the desired effect javascript file to the dojox/gfx folder (requires Dojo 1.7 or higher).  See the examples for more help.
+1. Add the desired effect javascript file to the dojox/gfx folder (requires Dojo 1.7 or higher).
+
+2. If you will be using the canvas renderer, update the _render function in dojox/gfx/canvas.js (or extend using g.canvas.Shape.prototype._render):
+
+	_render = function(/* Object */ ctx){
+		// summary: render the shape
+		ctx.save();
+		// process effect, if exists
+		if (this._gfxEffect && this.getUID() in this._gfxEffect) {
+			var effect = this._gfxEffect[this.getUID()];
+			if (effect && effect.type && effect.type == "shadow") {
+				ctx.shadowOffsetX = parseFloat(effect.dx);
+				ctx.shadowOffsetY = parseFloat(effect.dy);
+				ctx.shadowBlur    = parseFloat(effect.size);
+				var color = g.normalizeColor(effect.color);
+				ctx.shadowColor   = "rgba(" + color.r + ", " + color.g + ", " + color.b + ", " + color.a + ")";
+			}
+		}
+		this._renderTransform(ctx);
+		this._renderShape(ctx);
+		this._renderFill(ctx, true);
+		this._renderStroke(ctx, true);
+		ctx.restore();
+	};
+
+*See the examples for more help.*
 
 ## Usage
 
