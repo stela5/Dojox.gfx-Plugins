@@ -21,8 +21,32 @@
 
 		function init(){
 
-		      var node = dom.byId("surface");
-		      var surface = g.createSurface(node, 800, 310);
+			if (g.renderer == "canvas" || g.renderer == "canvasWithEvents") {
+				// gfx Canvas update to handle shadow effect
+				g.canvas.Shape.prototype._render = function(ctx){
+					// summary: render the shape
+					ctx.save();
+					// process effect, if exists
+					if (this._gfxEffect && this.getUID() in this._gfxEffect) {
+						var effect = this._gfxEffect[this.getUID()];
+						if (effect && effect.type && effect.type == "shadow") {
+							ctx.shadowOffsetX = parseFloat(effect.dx);
+							ctx.shadowOffsetY = parseFloat(effect.dy);
+							ctx.shadowBlur    = parseFloat(effect.size);
+							var color = g.normalizeColor(effect.color);
+							ctx.shadowColor   = "rgba(" + color.r + ", " + color.g + ", " + color.b + ", " + color.a + ")";
+						}
+					}
+					this._renderTransform(ctx);
+					this._renderShape(ctx);
+					this._renderFill(ctx, true);
+					this._renderStroke(ctx, true);
+					ctx.restore();
+				};
+			}
+
+			var node = dom.byId("surface");
+			var surface = g.createSurface(node, 800, 310);
 
 			surface.createRect({x: 25, y: 25, width: 100, height: 50, r: 5}).setFill("yellow").setStroke({color: "blue", width: 2});
 			surface.createCircle({cx: 200, cy: 50, r: 25}).setFill("yellow").setStroke({color: "blue", width: 2});
