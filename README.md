@@ -1,6 +1,6 @@
 # Dojox.gfx Plugins
 
-Dojox.gfx Plugins are a collection of effects that are designed to work with <a href="http://www.dojotoolkit.org/reference-guide/dojox/gfx.html">dojox.gfx</a> (version 1.7 or higher).
+Dojox.gfx Plugins are a collection of effects that are designed to work with <a href="http://www.dojotoolkit.org/reference-guide/dojox/gfx.html">dojox.gfx</a> (requires version 1.7 or higher).
 
 ## Installation
 
