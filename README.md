@@ -4,9 +4,7 @@ Dojox.gfx Plugins are a collection of effects that are designed to work with <a 
 
 ## Installation
 
-1. Add the desired effect javascript file to the dojox/gfx folder (requires Dojo 1.7 or higher).
-
-2. If you will be using the canvas renderer, update the _render function in dojox/gfx/canvas.js (or extend using g.canvas.Shape.prototype._render):
+1. If you will be using the canvas renderer, update the _render function in dojox/gfx/canvas.js (or extend using g.canvas.Shape.prototype._render):
 
 ```javascript
 _render = function(/* Object */ ctx){
@@ -31,7 +29,7 @@ _render = function(/* Object */ ctx){
 };
 ```
 
-*See the examples for more help.*
+2. See the examples for usage.
 
 ## Usage
 
@@ -65,7 +63,7 @@ _render = function(/* Object */ ctx){
 
 ## Dual-Licensed
 
-Copyright (c) 2011, Stela 5
+Copyright (c) 2011, <a href="http://stela5.com/">Stela 5</a>
 
 * <a href="http://www.opensource.org/licenses/mit-license.php">MIT</a>
 * <a href="http://www.opensource.org/licenses/GPL-2.0">GPL v2 (or later)</a>

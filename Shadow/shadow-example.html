@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- Put the shadow.js file in the "dojox/gfx" folder and this example file in the "dojox/gfx/demos" folder -->
 <html>
   <head>
       <title>Dojox.gfx Shadow Example</title>
@@ -10,12 +9,13 @@
       <h3 id="shadowHeader">loading...</h3>
       <div style="width:800;height:310;border:solid 1px" id="surface2"></div>
 
-      <script type="text/javascript" src="../../../dojo/dojo.js" data-dojo-config="async:true, isDebug:true, gfxRenderer:'svg,silverlight,canvas,vml'"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/dojo/1.7.0/dojo/dojo.js" data-dojo-config="async:true, isDebug:true, gfxRenderer:'svg,silverlight,canvas,vml'"></script>
+      <script src="shadow.js"></script>
       <script type="text/javascript">
 
 	"use strict";	// ES5 Strict
-	require(["dojo/ready", "dojo/dom", "dojox/gfx", "dojox/gfx/shadow", "dojo/domReady!"],
-	    function(ready, dom, g, loadShadow){
+	require(["dojo/ready", "dojo/dom", "dojox/gfx", "dojo/domReady!"],
+	    function(ready, dom, g){
 
 		ready(init);
 
